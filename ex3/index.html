@@ -69,9 +69,11 @@
   <div class="container">
     <div class="row">
       <div class="col-md-4">
+        <h3>Headquater of CR</h3>
         <div id="map1" class="map"></div>
       </div>
       <div class="col-4">
+        <h3>Capital Cities of Europe</h3>
         <div id="map2" class="map"></div>
       </div>
       <div class="col-4">
@@ -86,7 +88,7 @@
   <script>
   window.fbAsyncInit = function() {
     FB.init({
-      appId: '618107315220786',
+      appId: '2219457698088247',
       cookie: true,
       xfbml: true,
       version: 'v3.0'
@@ -162,19 +164,50 @@
   }
 
   //Maps API
-  var map;
+  var map, map2;
 
   function initMap() {
     //location of marker
     let codeFactor = {lat: 48.19654334496057, lng: 16.359400313634524};
     map = new google.maps.Map(document.getElementById('map1'), {
       center: codeFactor,
-      zoom: 18
+      zoom: 18,
+      mapTypeId: 'hybrid'
     });
     let marker = new google.maps.Marker({position: codeFactor, map: map});
+  
+    map2 = new google.maps.Map(document.getElementById('map2'),{
+      center: {lat: 48.19654334496057, lng: 10.359400313634524},
+      zoom: 3,
+      mapTypeId: 'terrain'
+    });
+    let capitalNames = ["London", "Paris", "Berlin", "Vienna", "Rom", "Madrid"];
+    let capitalsLocation = [
+      {lat: 51.3, lng: 0.7},
+      {lat: 48.52, lng: 2.20},
+      {lat: 52.31, lng: 13.24},
+      {lat: 48.12, lng: 16.22},
+      {lat: 41.54, lng: 12.27},
+      {lat: 40.24, lng: 3.41}
+      ];
+      var markers = capitalsLocation.map(function(location, i){
+        console.log("mark");
+        return new google.maps.Marker({
+          position: location,
+          label: capitalNames[i % capitalNames.length]
+        })
+      })
+        console.log(markers);
+
+       // Add a marker clusterer to manage the markers.
+        var markerCluster = new MarkerClusterer(map2, markers,
+            {imagePath: 'https://developers.google.com/maps/documentation/javascript/examples/markerclusterer/m'});
   }
+  
   </script>
-  <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAb7piN2F4DFvLNGuPWVDU3wnH0FGMmdoQ&callback=initMap" async defer></script>
+  <script src="https://developers.google.com/maps/documentation/javascript/examples/markerclusterer/markerclusterer.js">
+    </script>
+  <script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAb7piN2F4DFvLNGuPWVDU3wnH0FGMmdoQ&callback=initMap" async defer></script>
 </body>
 
 </html>
