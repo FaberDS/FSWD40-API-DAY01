@@ -77,6 +77,7 @@
         <div id="map2" class="map"></div>
       </div>
       <div class="col-4">
+        <h3>Washington DC metro</h3>
         <div id="map3" class="map"></div>
       </div>
     </div>
@@ -86,6 +87,7 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js" integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49" crossorigin="anonymous"></script>
   <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.1/js/bootstrap.min.js" integrity="sha384-smHYKdLADwkXOn1EmN1qk/HfnUcbVRZyYmZ4qpPea6sjB/pTJ0euyQp0Mk8ck+5T" crossorigin="anonymous"></script>
   <script>
+    //Default connectioin
   window.fbAsyncInit = function() {
     FB.init({
       appId: '2219457698088247',
@@ -94,12 +96,14 @@
       version: 'v3.0'
     });
 
+    //Added manually instead of the defaul line
     FB.getLoginStatus(function(response) {
       statusChangeCallback(response);
     });
 
   };
 
+  //Predefined
   (function(d, s, id) {
     var js, fjs = d.getElementsByTagName(s)[0];
     if (d.getElementById(id)) { return; }
@@ -109,13 +113,14 @@
     fjs.parentNode.insertBefore(js, fjs);
   }(document, 'script', 'facebook-jssdk'));
 
-
+  //Initialise check ligin status
   function checkLoginState() {
     FB.getLoginStatus(function(response) {
       statusChangeCallback(response);
     });
   }
 
+  //Take response and set update elements, call graphAPI
   function statusChangeCallback(response) {
     if (response.status === 'connected') {
       console.log('Logged in!');
@@ -128,6 +133,7 @@
     }
   }
 
+  //Chande dispplay properties of buttons and content
   function setElements(isLoggedIn) {
     if (isLoggedIn) {
       document.getElementById("content").style.display = "block";
@@ -149,8 +155,9 @@
     });
   }
 
+  //Display user data
   function graphAPI() {
-    FB.api('me?fields=id,name,email', function(response) {
+    FB.api('me?fields=id,name,email', function(response) {//specifies which data to show
       document.getElementById("greeting").innerHTML = "";
       document.getElementById("user_mail").innerHTML = "";
       if (response && !response.error) {
@@ -164,8 +171,9 @@
   }
 
   //Maps API
-  var map, map2;
+  var map, map2, map3;
 
+  //Default inittialising
   function initMap() {
     //location of marker
     let codeFactor = {lat: 48.19654334496057, lng: 16.359400313634524};
@@ -174,13 +182,16 @@
       zoom: 18,
       mapTypeId: 'hybrid'
     });
+    //Set Position for marker of map1
     let marker = new google.maps.Marker({position: codeFactor, map: map});
-  
+    
+    //Capital cities
     map2 = new google.maps.Map(document.getElementById('map2'),{
       center: {lat: 48.19654334496057, lng: 10.359400313634524},
       zoom: 3,
       mapTypeId: 'terrain'
     });
+
     let capitalNames = ["London", "Paris", "Berlin", "Vienna", "Rom", "Madrid"];
     let capitalsLocation = [
       {lat: 51.3, lng: 0.7},
@@ -190,24 +201,51 @@
       {lat: 41.54, lng: 12.27},
       {lat: 40.24, lng: 3.41}
       ];
-      var markers = capitalsLocation.map(function(location, i){
-        console.log("mark");
+      //Combine marker tags with coordinates -- iteration over capitalsLocation
+      var markers = capitalsLocation.map((location, i) => {
+        //console.log("mark");
+        console.log(i);
         return new google.maps.Marker({
           position: location,
           label: capitalNames[i % capitalNames.length]
         })
       })
-        console.log(markers);
+        //console.log(markers);
 
        // Add a marker clusterer to manage the markers.
+       //Predifuned
         var markerCluster = new MarkerClusterer(map2, markers,
             {imagePath: 'https://developers.google.com/maps/documentation/javascript/examples/markerclusterer/m'});
+
+    //Washington DC metro
+    map3 = new google.maps.Map(document.getElementById('map3'), {
+      zoom: 9,
+      center: {lat: 38.889484, lng: -77.035278},
+      mapTypeId: 'terrain'
+    });
+
+    //Link JSON to the map3
+    map3.data.loadGeoJson('stations.geojson');
+
+    //Loop JSON and create a marker for each position
+    window.eqfeed_callback = function (results) {
+      for (var i = 0; i < results.features.length; i++) {
+        let coords = results.features[i].geometry.coordinates;
+        let latLng = new google.maps.LatLng(coords[1], coords[0]);
+        let marker = new google.maps.Marker({
+          position: latLng,
+          map: map3
+        });
+      }
+    }
   }
   
   </script>
+  <!-- for the cluster of map2 -->
   <script src="https://developers.google.com/maps/documentation/javascript/examples/markerclusterer/markerclusterer.js">
-    </script>
-  <script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAb7piN2F4DFvLNGuPWVDU3wnH0FGMmdoQ&callback=initMap" async defer></script>
+  </script>
+  <!--Specify the API key -->
+  <script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAb7piN2F4DFvLNGuPWVDU3wnH0FGMmdoQ&callback=initMap"></script>
 </body>
 
 </html>
