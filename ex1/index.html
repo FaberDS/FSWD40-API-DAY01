@@ -29,6 +29,15 @@
       </div>
     </nav>
   </header>
+  <div class="container">
+    <div id="content">
+      <p>Hello<span id="greeting"></span></p>
+      <p>This is your E-Mail<span id="user_mail"></span></p>
+    </div>
+    <div id="content_logOut">
+        <p>Welcome to our Page please log in</p>
+    </div>
+  </div>
   <!-- /header -->
   <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js" integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49" crossorigin="anonymous"></script>
@@ -36,7 +45,7 @@
   <script>
   window.fbAsyncInit = function() {
     FB.init({
-      appId: '618107315220786',
+      appId: '2219457698088247',
       cookie: true,
       xfbml: true,
       version: 'v3.0'
@@ -68,17 +77,23 @@
   	if(response.status === 'connected') {
   		console.log('Logged in!');
   		setElements(true);
+      graphAPI();
   	} else {
   		console.log('Logged out!');
   		setElements(false);
+      
   	}
   }
 
   function setElements(isLoggedIn) {
   	if (isLoggedIn) {
+      document.getElementById("content").style.display = "block";
   		document.getElementById("fb-btn").style.display = 'none';
   		document.getElementById("logout").style.display = 'block';
+      document.getElementById("content_logOut").style.display = 'none';
   	} else {
+      document.getElementById("content_logOut").style.display = 'block';
+      document.getElementById("content").style.display = "none";
   		document.getElementById("fb-btn").style.display = 'block';
   		document.getElementById("logout").style.display = 'none';
   	}
@@ -89,6 +104,20 @@
   		setElements(false);
   		checkLoginState();
   	});
+  }
+  function graphAPI(){
+      FB.api('me?fields=id,name,email', function(response){
+              
+              document.getElementById("greeting").innerHTML = "";
+              document.getElementById("user_mail").innerHTML = "";
+          if(response && !response.error){
+              let uname = response.name;
+              let umail = response.email;
+              document.getElementById("greeting").innerHTML = " " + uname;
+              document.getElementById("user_mail").innerHTML = " " + umail;
+              console.log(response);
+          }
+      })
   }
   </script>
 </body>

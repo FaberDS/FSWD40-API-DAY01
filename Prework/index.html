@@ -39,6 +39,8 @@
             if(response.status === 'connected'){
                 console.log("logged in");
                 setElements(true);
+                console.log("this is the response");
+                graphAPI();
             }else{
                 console.log("not logged in")
                 setElements(false);
@@ -67,7 +69,7 @@
         }
 
         function graphAPI(){
-            FB.appId('me?fields=id,name,email', function(response){
+            FB.api('me?fields=id,name', function(response){
                 if(response && !response.error){
                     console.log(response);
                 }
